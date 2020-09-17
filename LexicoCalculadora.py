@@ -1,12 +1,9 @@
 import re
-linea = 0
-columna = 0
-contador = 0
-Error = []
-Tokens= []
-Entrada_Corregida =''
-consola =''
-retorno =''
+texto=""
+confirmacion =[]
+error = ""
+token = []
+parent = ""
 from SintacticoCalculadora import Sintactico
 class analizadorCalculadora:
     # variable para control de estados
@@ -21,130 +18,117 @@ class analizadorCalculadora:
         else:
             return False
 
-    def consola():
-        global consola
-        return consola
 
-    def analizador(texto):
-        global linea, columna, counter, Errores, Entrada_Corregida, Error, consola, retorno
-        listaTokens = []
-        entrada = texto
+    def analizador(entrada):
+
+        global texto, confirmacion, error, token, parent
+        entrada = entrada+ "\n "
         lexema = ""
-        consola = ""
-        Entrada_Corregida = ""
         columna = 1
         fila = 1
         estado = 0
         i = 0
-        portador = 0
+        id = 1
+        idE = 1
 
+        while i <len(entrada):
 
-        while i < len(entrada):
+            char = entrada[i]
             if estado is 0:
-                if entrada[i] is '(':
+                # print("entro a 0")
+                if char == '(':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    listaTokens.append(['PARENTESIS ABIERTO',   entrada[i], fila, columna])
-                    columna+=1
-                elif entrada[i] is ')':
+                    confirmacion.append([columna, fila, 'PARA', char])
+                    columna += 1
+                elif char == ')':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    listaTokens.append(['PARENTESIS CERRADO',   entrada[i], fila, columna])
+                    confirmacion.append([columna, fila, 'PARC', char])
                     columna+=1
-                elif entrada[i] is '-':
+                elif char == '-':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    listaTokens.append(['SIGNO MENOS',   entrada[i], fila, columna])
+                    confirmacion.append([columna, fila, 'MEN', char])
                     columna+=1
-                elif entrada[i] is '+':
+                elif char == '+':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    listaTokens.append(['SIGNO MAS',   entrada[i], fila, columna])
+                    confirmacion.append([columna, fila, 'MAS', char])
                     columna+=1
-                elif entrada[i] is '*':
+                elif char == '/':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    listaTokens.append(['SIGNO MULTIPLICACION',   entrada[i], fila, columna])
+                    confirmacion.append([columna, fila, 'DIV', char])
                     columna+=1
-                elif entrada[i] is '/':
+                elif char == '*':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    listaTokens.append(['SIGNO DIVISION',   entrada[i], fila, columna])
+                    confirmacion.append([columna, fila, 'POR', char])
                     columna+=1
-                elif entrada.isdigit():
+                elif char.isdigit():
                     estado  = 1
                     lexema+=char
-                elif analizadorCalculadora.leerLetras(entrada[i]):
+                elif analizadorCalculadora.leerLetras(char):
                     estado = 2
-                    lexema= lexema + entrada[i]
-                elif entrada[i] == '\t' or entrada[i] ==' ':
+                    lexema+=char
+                elif char == '\t' or char ==' ':
                     estado = 0
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
                     columna+=1
-                elif entrada[i] =='\n':
+                elif char == '\n':
                     estado = 0
-                    lexema = lexema + entrada[i]
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
-                    OperacionCompleta=""
-
-                    for token in listaTokens:
-                        OperacionCompleta += str(token[0])
-                    #comienza analisis con lookahead
-                    if len(listaTokens)!=0:
-                        
-                         
-                        if Sintactico.parser(listaTokens):
-                            print("ANALISIS SINTACTICO CORRECTO")
-                            Tokens.append([portador,fila,OperacionCompleta,"TRUE"])
+                    expresion = ""
+                    for tokens in confirmacion:
+                        expresion += str(tokens[3])
+                    parser = Sintactico
+                    if len(confirmacion) != 0:
+                        parseoCorrecto = parser.parse(confirmacion)
+                        if parseoCorrecto:
+                            print("Analisis Sintactico Correcto.")
+                            token.append([idE,fila,expresion,"True"])
                         else:
-                            Tokens.append([portador, fila, OperacionCompleta, "TRUE"])
-                        OperacionCompleta = ""
-                        listaTokens = []
-                        id=1
-                        fila += 1
-                        portador += 1
+                            token.append([idE,fila,expresion,"False"])
+                    confirmacion = []
+                    id = 1
+                    fila += 1
+                    idE += 1
+                #agregar parse aqui
 
-                    '''
-                        aca vamos a poner el analizador sintacitco como llamada
-                    '''
                 else:
-                    portador += 1
-                    Error.append([lexema,fila,columna])
-
+                    error.append([idE,lexema,fila, columna])
+                    idE+=1
             elif estado is 1:
-                if entrada[i].isdigit():
+                if char.isdigit():
+                    lexema+=char
                     estado = 1
-                    lexema= lexema + entrada[i]
-                elif entrada[i] is '.':
+                elif char =='.':
+                    lexema+=char
                     estado = 3
-                    lexema = lexema + entrada[i]
                 else:
+                    confirmacion.append([columna, fila, 'NUMERIC', lexema])
+                    columna+=1
                     estado = 0
-                    listaTokens.append(['NUMERO', lexema, fila, columna])
-                    Entrada_Corregida = Entrada_Corregida + entrada[i]
+                    lexema=""
+                    i-=1
+            elif estado is 2:
+                if char.isdigit() or analizadorCalculadora.leerLetras(char):
+                    lexema+=char
+                    estado = 2
+                else:
+                    confirmacion.append([columna, fila, 'ID', lexema])
+                    columna+=1
+                    estado = 0
+                    lexema=""
+                    i-=1
+            elif estado is 3:
+                if char.isdigit():
+                    lexema += char
+                    estado = 1
+                else:
+                    confirmacion.append([columna, fila, 'NUMERIC', lexema])
                     columna += 1
+                    estado = 0
                     lexema = ""
                     i -= 1
-            elif estado is 2:
-                if entrada[i].isdigit() or analizadorCalculadora.leerLetras(entrada[i]):
-                    estado = 2
-                    lexema = lexema + entrada[i]
-                else:
-                    columna+=1
-                    estado = 0
-                    i-=1
-                    listaTokens.append(['IDENTIFICADOR',lexema,fila,columna])
-                    lexema =''
-            elif estado is 3:
-                if entrada[i].isdigit():
-                    estado = 1
-                    lexema+=char
-                else:
-                    columna +=1
-                    estado = 0
-                    lexema = ''
-                    i-=1
-                    listaTokens.append(['NUMERO', lexema, fila, columna])
+
+
+
+
+
 
             i+= 1
 

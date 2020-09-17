@@ -229,7 +229,7 @@ class analizador:
     
     def ReporteErrores():
         global Error
-        f=open("Reporte.html",'w')
+        f=open("ReporteHTML.html",'w')
         f.write("<html lang=\"es\">\n")
         f.write("<head><title>Reporte de Errores</title></head>\n")
         f.write("<body>\n")

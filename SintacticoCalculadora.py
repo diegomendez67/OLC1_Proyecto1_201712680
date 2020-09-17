@@ -1,48 +1,47 @@
-tablaSimbolos = {
-    'E': {'PARA': "eT", 'NUMERO': "eT", 'IDENTIFICADOR': "eT"},
-    'e': {'SIGNO MAS': "eT+", 'SIGNO MENOS': "eT-", 'PARENTESIS CERRADO': None, '$': None},
-    'T': {'PARA': "tF", 'NUMERO': "tF", 'IDENTIFICADOR': "tF"},
-    't': {'SIGNO MULTIPLICACION': "tF*", 'SIGNO DIVISION': "tF/", 'SIGNO MAS': None, 'SIGNO MENOS': None,
-          'PARENTESIS CERRADO': None, '$': None},
-    'F': {'PARA': ")E(", 'NUMERO': "i", 'IDENTIFICADOR': "d"}
-}
+tabla = {
+    'E' : { 'PARA' : "XT", 'NUMERIC' : "XT",'ID' : "XT" }, 
+    'X' : { 'MAS' : "XT+", 'MEN' : "XT-",'PARC' : None, '$' : None }, 
+    'T' : { 'PARA' : "ZF", 'NUMERIC' : "ZF" ,'ID' : "ZF"},
+    'Z' : { 'POR' : "ZF*", 'DIV' : "ZF/",'MAS' : None, 'MEN' : None,'PARC' : None, '$' : None }, 
+    'F' : { 'PARA' : ")E(", 'NUMERIC' : "i",'ID' : "d" } 
+    }
 # variables para erroes y look ahead
-pilaAnilisis = ['$', 'E']
+pila = ['$', 'E']
 Errores = []
 recorrido =0
 
 class Sintactico:
 
 
-    def recorrido(produccion, token):
-        global tablaSimbolos,pilaAnilisis,Errores
+    def obtenerMatrix(produccion, token):
+        global tabla,pila,Errores
         try:
-            return tablaSimbolos[produccion][token]
+            return tabla[produccion][token]
         except:
             print("ERROR SINTACTICO")
-            return "ERROR DE SINTAXIS"
+            return "MALO"
 
-    def insertar_Pila(producciones):
-        entradas = list(producciones)
-        for e in entradas:
-            if e is "(":
-                pilaAnilisis.append('PARENTESISABIERTO')
+    def pushear(producciones):
+        lista = list(producciones)
+        for l in lista:
+            if l == "(":
+                pila.append('PARA')
             elif l == ")":
-                pilaAnilisis.append('PARENTESISCERRADO')
+                pila.append('PARC')
             elif l == "i":
-                pilaAnilisis.append('NUMERO')
+                pila.append('NUMERIC')
             elif l == "d":
-                pilaAnilisis.append('IDENTIFICADOR')
+                pila.append('ID')
             elif l == "+":
-                pilaAnilisis.append('SIGNOMAS')
+                pila.append('MAS')
             elif l == "-":
-                pilaAnilisis.append('SIGNOMENOS')
+                pila.append('MEN')
             elif l == "*":
-                pilaAnilisisa.ppend('SIGNO MULTIPLICACION')
+                pila.append('POR')
             elif l == "/":
-                pilaAnilisis.append('SIGNO DIVISION')
+                pila.append('DIV')
             else:
-                pilaAnilisis.append(l)
+                pila.append(l)
                 
     def TipoToken(entrada):
         tipos = ['PARENTESIS ABIERTO','PARENTESIS CERRADO','NUMERO','IDENTIFICADOR','SIGNO MAS','SIGNO MENOS','SIGNO MULTIPLICACION','SIGNO DIVISION']
@@ -52,28 +51,29 @@ class Sintactico:
             else: 
                 return False
                 
-    def parser (tokens):
-        global pilaAnilisis,recorrido
-        tokens.append(['$',0,0,0])
-        while len(pilaAnilisis)-1>=0:
-            recorrido = len(pilaAnilisis)-1
-            t1 = pilaAnilisis[recorrido]
-            t2 = tokens[0][0]
-            
-            if t1==t2:
-                if var1 is '$':
-                    return True
-                elif Sintactico.TipoToken(t1):
-                    pilaAnilisis.pop()
-                    del tokens[0]
-            else:
-                pilaAnilisis.pop()
-                val = Sintactico.recorrido(t1,t2)
+    def parse (tokens):
+        global pila
+        tokens.append([0,0,'$',0])
+        while len(pila)-1>=0:
+            counter = len(pila)-1
+            var1 = pila[counter]
+            var2 = tokens[0][2]
 
-                if val == "ERROR DE SINTAXIS":
+            if var1 == var2:
+                if var1 == "$":
+                    return True
+                elif var1 == "NUMERIC" or var1 == "ID" or var1 == "PARA" or var1 == "PARC" or var1 == "MAS" or var1 == "MEN" or var1 == "POR" or var1 == "DIV":
+                    pila.pop()
+                    del tokens[0]
+                    
+            else:
+                pila.pop()
+                val = Sintactico.obtenerMatrix(var1, var2)
+
+                if val == "MALO":
                     return False
                 elif val != None:
-                    Sintactico.insertar_Pila(val)
+                    Sintactico.pushear(val)
                     
                 
             

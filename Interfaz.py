@@ -28,7 +28,7 @@ def ejecutar():
         html.analizador(fname)
         salidas.insert(INSERT,html.Mandar_Nuevo())
         html.ReporteErrores()
-        os.system("Reporte.html")
+        os.system("ReporteHTML.html")
 
     elif tipo in ".css":
         salidas.delete(1.0, END)
@@ -38,7 +38,7 @@ def ejecutar():
         salidas.insert(INSERT, css.consola())
         salidas.insert(INSERT, css.Mandar_Nuevo())
         css.ReporteErrores()
-        os.system("Reporte.html")
+        os.system("ReporteCSS.html")
         
     elif tipo in ".rmt":
         salidas.delete(1.0, END)
