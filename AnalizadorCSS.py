@@ -65,7 +65,7 @@ class analizadorCSS:
         f.write("<p><h1>" + "ERRORES" + "</h1><p>\n")
 
         if len(Error) > 0:
-            f.write("<table border=\"1\">\n")
+            f.write("<table style=\"background: rgba(128, 255, 0, 0.3); border: 1px solid rgba(100, 200, 0, 0.3);\" >\n")
             f.write("<td>Error</td><td>Fila</td><td>Columna</td>")
 
             for i in Error:

@@ -13,12 +13,13 @@ recorrido =0
 class Sintactico:
 
 
+
+
     def obtenerMatrix(produccion, token):
         global tabla,pila,Errores
         try:
             return tabla[produccion][token]
         except:
-            print("ERROR SINTACTICO")
             return "MALO"
 
     def pushear(producciones):

@@ -35,7 +35,6 @@ class analizadorCalculadora:
 
             char = entrada[i]
             if estado is 0:
-                # print("entro a 0")
                 if char == '(':
                     estado = 0
                     confirmacion.append([columna, fila, 'PARA', char])
@@ -79,9 +78,9 @@ class analizadorCalculadora:
                         parseoCorrecto = parser.parse(confirmacion)
                         if parseoCorrecto:
                             print("Analisis Sintactico Correcto.")
-                            token.append([idE,fila,expresion,"True"])
+                            token.append([idE,fila,expresion,"Cadena Correcta"])
                         else:
-                            token.append([idE,fila,expresion,"False"])
+                            token.append([idE,fila,expresion,"Cadena con Errores"])
                     confirmacion = []
                     id = 1
                     fila += 1
@@ -125,12 +124,29 @@ class analizadorCalculadora:
                     lexema = ""
                     i -= 1
 
-
-
-
-
-
             i+= 1
+            
+            
+    def ReporteCalculadora():
+        f = open("ReporteRMT.html", "w")
+        f.write("<html lang=\"es\">\n")
+        f.write("<head><title>Reporte de Analisis Sintactico</title></head>\n")
+        f.write("<body>\n")
+        f.write("<p><h1>" + "Reporte de Analisis Sintactico" + "</h1><p>\n")
 
+        if len(token) != 0:
+            f.write("<table style=\"background: rgba(128, 255, 0, 0.3); border: 1px solid rgba(100, 200, 0, 0.3);\" >\n")
+            f.write("<tr><td>No.</td><td>Fila</td><td>Expresion</td><td>Analisis</td>")
+            for e in token:
+                f.write("<tr>")
+                for er in e:
+                    f.write("<td>" + str(er) + "</td>")
+                f.write("</td>\n")
+            f.write("</table>\n")
+        else:
+            f.write("<p><h3>No hay errores</h3><p>\n")
+
+        f.write("</body>\n")
+        f.write("</html>\n")
 
 

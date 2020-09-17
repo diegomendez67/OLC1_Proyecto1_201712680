@@ -45,6 +45,8 @@ def ejecutar():
         rmt = analizadorCalculadora
         messagebox.showinfo(message="analizando rmt")
         rmt.analizador(fname)
+        rmt.ReporteCalculadora()
+        os.system("ReporteRMT.html")
         
     
 
