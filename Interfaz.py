@@ -9,7 +9,7 @@ from tkinter import Tk, Menu, messagebox, filedialog, ttk, Label, scrolledtext, 
 import os.path
 from AnalizadorHTML import analizador
 from AnalizadorCSS import analizadorCSS
-
+from LexicoCalculadora import analizadorCalculadora
 #funciones del menu
 
 archivo =""
@@ -28,6 +28,7 @@ def ejecutar():
         html.analizador(fname)
         salidas.insert(INSERT,html.Mandar_Nuevo())
         html.ReporteErrores()
+        os.system("Reporte.html")
 
     elif tipo in ".css":
         salidas.delete(1.0, END)
@@ -37,8 +38,15 @@ def ejecutar():
         salidas.insert(INSERT, css.consola())
         salidas.insert(INSERT, css.Mandar_Nuevo())
         css.ReporteErrores()
-
-    os.system("Reporte.html")
+        os.system("Reporte.html")
+        
+    elif tipo in ".rmt":
+        salidas.delete(1.0, END)
+        rmt = analizadorCalculadora
+        messagebox.showinfo(message="analizando rmt")
+        rmt.analizador(fname)
+        
+    
 
 
 

@@ -7,7 +7,7 @@ Tokens= []
 Entrada_Corregida =''
 consola =''
 retorno =''
-
+from SintacticoCalculadora import Sintactico
 class analizadorCalculadora:
     # variable para control de estados
     estado = 0
@@ -40,40 +40,38 @@ class analizadorCalculadora:
 
 
         while i < len(entrada):
-
-
             if estado is 0:
-                if cadena[i] == '(':
+                if entrada[i] is '(':
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     listaTokens.append(['PARENTESIS ABIERTO',   entrada[i], fila, columna])
                     columna+=1
-                elif cadena[i] == ')':
+                elif entrada[i] is ')':
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     listaTokens.append(['PARENTESIS CERRADO',   entrada[i], fila, columna])
                     columna+=1
-                elif cadena[i] == '-':
+                elif entrada[i] is '-':
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     listaTokens.append(['SIGNO MENOS',   entrada[i], fila, columna])
                     columna+=1
-                elif cadena[i] == '+':
+                elif entrada[i] is '+':
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     listaTokens.append(['SIGNO MAS',   entrada[i], fila, columna])
                     columna+=1
-                elif cadena[i] == '*':
+                elif entrada[i] is '*':
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     listaTokens.append(['SIGNO MULTIPLICACION',   entrada[i], fila, columna])
                     columna+=1
-                elif cadena[i] == '/':
+                elif entrada[i] is '/':
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     listaTokens.append(['SIGNO DIVISION',   entrada[i], fila, columna])
                     columna+=1
-                elif char.isdigit():
+                elif entrada.isdigit():
                     estado  = 1
                     lexema+=char
                 elif analizadorCalculadora.leerLetras(entrada[i]):
@@ -83,11 +81,28 @@ class analizadorCalculadora:
                     estado = 0
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     columna+=1
-                elif char =='\n':
+                elif entrada[i] =='\n':
                     estado = 0
                     lexema = lexema + entrada[i]
                     Entrada_Corregida = Entrada_Corregida + entrada[i]
                     OperacionCompleta=""
+
+                    for token in listaTokens:
+                        OperacionCompleta += str(token[0])
+                    #comienza analisis con lookahead
+                    if len(listaTokens)!=0:
+                        
+                         
+                        if Sintactico.parser(listaTokens):
+                            print("ANALISIS SINTACTICO CORRECTO")
+                            Tokens.append([portador,fila,OperacionCompleta,"TRUE"])
+                        else:
+                            Tokens.append([portador, fila, OperacionCompleta, "TRUE"])
+                        OperacionCompleta = ""
+                        listaTokens = []
+                        id=1
+                        fila += 1
+                        portador += 1
 
                     '''
                         aca vamos a poner el analizador sintacitco como llamada
@@ -131,7 +146,7 @@ class analizadorCalculadora:
                     i-=1
                     listaTokens.append(['NUMERO', lexema, fila, columna])
 
-        i+= 1
+            i+= 1
 
 
 
